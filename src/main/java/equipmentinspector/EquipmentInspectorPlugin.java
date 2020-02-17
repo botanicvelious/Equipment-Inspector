@@ -1,11 +1,13 @@
 package equipmentinspector;
 
-import com.google.common.eventbus.Subscribe;
+import net.runelite.api.events.ChatMessage;
+import net.runelite.client.events.ConfigChanged;
+import net.runelite.api.events.MenuEntryAdded;
+import net.runelite.api.events.PlayerMenuOptionClicked;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.Player;
-import net.runelite.api.events.PlayerMenuOptionClicked;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
@@ -23,6 +25,12 @@ import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
+import net.runelite.client.Notifier;
+import net.runelite.client.eventbus.Subscribe;
+import javax.inject.Provider;
+import javax.swing.SwingUtilities;
+
+
 
 @PluginDescriptor(
 		name = "Equipment Inspector",
@@ -41,7 +49,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private MenuManager menuManager;
+	private Provider<MenuManager> menuManager;
 
 	@Inject
 	private ScheduledExecutorService executor;
@@ -52,11 +60,15 @@ public class EquipmentInspectorPlugin extends Plugin
 	private NavigationButton navButton;
 	private EquipmentInspectorPanel equipmentInspectorPanel;
 
+	@Inject
+	private Notifier notifier;
+
 	@Override
 	protected void startUp() throws Exception
 	{
+		notifier.notify("run plugin");
 		equipmentInspectorPanel = injector.getInstance(EquipmentInspectorPanel.class);
-		menuManager.addPlayerMenuItem(INSPECT_EQUIPMENT);
+		menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
 
 		BufferedImage icon;
 		synchronized (ImageIO.class)
@@ -77,11 +89,11 @@ public class EquipmentInspectorPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		menuManager.removePlayerMenuItem(INSPECT_EQUIPMENT);
+		menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
 	}
 
 	@Subscribe
-	public void onLookupMenuClicked(PlayerMenuOptionClicked event)
+	public void onPlayerMenuOptionClicked(PlayerMenuOptionClicked event)
 	{
 		if (event.getMenuOption().equals(INSPECT_EQUIPMENT))
 		{
