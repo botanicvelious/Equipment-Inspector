@@ -15,6 +15,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.Text;
+import static net.runelite.api.ItemID.*;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
@@ -30,6 +31,8 @@ import net.runelite.client.eventbus.Subscribe;
 import javax.inject.Provider;
 import javax.swing.SwingUtilities;
 
+import static net.runelite.api.ItemID.*;
+import static net.runelite.api.ItemID.RING_OF_WEALTH_5;
 
 
 @PluginDescriptor(
@@ -134,6 +137,57 @@ public class EquipmentInspectorPlugin extends Plugin
 						int itemId = p.getPlayerComposition().getEquipmentId(kitType);
 						if (itemId != -1)
 						{
+							switch(itemId) {
+								case ABYSSAL_BRACELET1:
+								case ABYSSAL_BRACELET2:
+								case ABYSSAL_BRACELET3:
+								case ABYSSAL_BRACELET4:
+									itemId = ABYSSAL_BRACELET5;
+									break;
+								case BURNING_AMULET1:
+								case BURNING_AMULET2:
+								case BURNING_AMULET3:
+								case BURNING_AMULET4:
+									itemId = BURNING_AMULET5;
+									break;
+								case COMBAT_BRACELET:
+								case COMBAT_BRACELET1:
+								case COMBAT_BRACELET2:
+								case COMBAT_BRACELET3:
+								case COMBAT_BRACELET4:
+								case COMBAT_BRACELET5:
+									itemId = COMBAT_BRACELET6;
+									break;
+								case DIGSITE_PENDANT_1:
+								case DIGSITE_PENDANT_2:
+								case DIGSITE_PENDANT_3:
+								case DIGSITE_PENDANT_4:
+									itemId = DIGSITE_PENDANT_5;
+									break;
+								case AMULET_OF_GLORY1:
+								case AMULET_OF_GLORY2:
+								case AMULET_OF_GLORY3:
+								case AMULET_OF_GLORY4:
+								case AMULET_OF_GLORY5:
+								case AMULET_OF_GLORY:
+									itemId = AMULET_OF_GLORY6;
+									break;
+								case AMULET_OF_GLORY_T1:
+								case AMULET_OF_GLORY_T2:
+								case AMULET_OF_GLORY_T3:
+								case AMULET_OF_GLORY_T4:
+								case AMULET_OF_GLORY_T5:
+								case AMULET_OF_GLORY_T:
+									itemId = AMULET_OF_GLORY_T6;
+									break;
+								case RING_OF_WEALTH:
+								case RING_OF_WEALTH_1:
+								case RING_OF_WEALTH_2:
+								case RING_OF_WEALTH_3:
+								case RING_OF_WEALTH_4:
+									itemId = RING_OF_WEALTH_5;
+									break;
+							}
 							ItemComposition itemComposition = client.getItemDefinition(itemId);
 							playerEquipment.put(kitType, itemComposition);
 						}
