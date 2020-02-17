@@ -18,6 +18,9 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import static net.runelite.api.ItemID.*;
+import net.runelite.api.Client;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 
 @Slf4j
 @Singleton
@@ -28,7 +31,10 @@ public class EquipmentInspectorPanel extends PluginPanel
     private GridBagConstraints c;
     private JPanel equipmentPanels;
     private JPanel header;
-    private JLabel nameLabel;
+    public JLabel nameLabel;
+
+    @Inject
+    private Client client;
 
     @Inject
     private ItemManager itemManager;
@@ -73,6 +79,7 @@ public class EquipmentInspectorPanel extends PluginPanel
 
     public void update(Map<KitType, ItemComposition> playerEquipment, String playerName)
     {
+
         if (playerName.isEmpty() || playerName == null)
         {
             nameLabel.setText(NO_PLAYER_SELECTED);

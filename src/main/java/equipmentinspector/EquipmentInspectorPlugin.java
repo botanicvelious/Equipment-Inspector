@@ -30,9 +30,10 @@ import net.runelite.client.Notifier;
 import net.runelite.client.eventbus.Subscribe;
 import javax.inject.Provider;
 import javax.swing.SwingUtilities;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 
 import static net.runelite.api.ItemID.*;
-import static net.runelite.api.ItemID.RING_OF_WEALTH_5;
 
 
 @PluginDescriptor(
@@ -69,7 +70,6 @@ public class EquipmentInspectorPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		notifier.notify("run plugin");
 		equipmentInspectorPanel = injector.getInstance(EquipmentInspectorPanel.class);
 		menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
 
@@ -93,6 +93,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
+		pluginToolbar.removeNavigation(navButton);
 	}
 
 	@Subscribe
@@ -192,8 +193,13 @@ public class EquipmentInspectorPlugin extends Plugin
 							playerEquipment.put(kitType, itemComposition);
 						}
 					}
-
-					equipmentInspectorPanel.update(playerEquipment, playerName);
+					final Widget wildernessLevelWidget = client.getWidget(WidgetInfo.PVP_WILDERNESS_LEVEL);
+					if (wildernessLevelWidget == null)
+					{
+						equipmentInspectorPanel.update(playerEquipment, playerName);
+					} else {
+						equipmentInspectorPanel.nameLabel.setText("Can not check equipment in PVP areas.");
+					}
 				}
 			});
 		}
