@@ -1,13 +1,14 @@
-package com.example;
+package com.equipmentinspector;
 
+import equipmentinspector.EquipmentInspectorPlugin;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class ExamplePluginTest
+public class EquipmentInspectorTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(ExamplePlugin.class);
+		ExternalPluginManager.loadBuiltin(EquipmentInspectorPlugin.class);
 		RuneLite.main(args);
 	}
 }
