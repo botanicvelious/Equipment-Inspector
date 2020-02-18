@@ -102,8 +102,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	{
 		if (event.getMenuOption().equals(INSPECT_EQUIPMENT))
 		{
-			executor.execute(() ->
-			{
+
 				try
 				{
 					SwingUtilities.invokeAndWait(() ->
@@ -145,7 +144,6 @@ public class EquipmentInspectorPlugin extends Plugin
 					}
 					equipmentInspectorPanel.update(playerEquipment, playerName);
 				}
-			});
 		}
 	}
 }
