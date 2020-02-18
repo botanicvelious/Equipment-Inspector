@@ -139,7 +139,6 @@ public class EquipmentInspectorPlugin extends Plugin
 						int itemId = p.getPlayerComposition().getEquipmentId(kitType);
 						if (itemId != -1)
 						{
-							itemId = ItemVariationMapping.map(itemId);
 							ItemComposition itemComposition = client.getItemDefinition(itemId);
 							playerEquipment.put(kitType, itemComposition);
 						}
