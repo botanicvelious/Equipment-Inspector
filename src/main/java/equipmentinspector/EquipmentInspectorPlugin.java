@@ -144,13 +144,7 @@ public class EquipmentInspectorPlugin extends Plugin
 							playerEquipment.put(kitType, itemComposition);
 						}
 					}
-					final Widget wildernessLevelWidget = client.getWidget(WidgetInfo.PVP_WILDERNESS_LEVEL);
-					if (wildernessLevelWidget == null)
-					{
-						equipmentInspectorPanel.update(playerEquipment, playerName);
-					} else {
-						equipmentInspectorPanel.nameLabel.setText("Can not check equipment in PVP areas.");
-					}
+					equipmentInspectorPanel.update(playerEquipment, playerName);
 				}
 			});
 		}
