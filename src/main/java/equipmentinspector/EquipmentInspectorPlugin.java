@@ -46,7 +46,7 @@ import static net.runelite.api.ItemID.*;
 @Singleton
 public class EquipmentInspectorPlugin extends Plugin
 {
-	private static final String INSPECT_EQUIPMENT = "Inspect Equipment";
+	private static final String INSPECT_EQUIPMENT = "Equipment";
 	private static final String KICK_OPTION = "Kick";
 
 	@Inject
