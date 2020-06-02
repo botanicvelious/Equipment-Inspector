@@ -1,4 +1,4 @@
-package equipmentinspector;
+package net.runelite.client.plugins.equipmentinspector;
 
 import net.runelite.api.events.ChatMessage;
 import net.runelite.client.events.ConfigChanged;
