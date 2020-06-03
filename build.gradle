@@ -5,7 +5,7 @@ plugins {
 repositories {
 	mavenLocal()
 	maven {
-		url = 'http://repo.runelite.net'
+		url = 'https://repo.runelite.net'
 	}
 	mavenCentral()
 }
@@ -25,7 +25,7 @@ dependencies {
 	}
 }
 
-group = 'com.equipmentinspector'
+group = 'equipmentinspector'
 version = '1.1'
 sourceCompatibility = '1.8'
 
