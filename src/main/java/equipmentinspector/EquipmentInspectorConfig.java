@@ -1,4 +1,4 @@
-package equipmentinspector;
+package net.runelite.client.plugins.equipmentinspector;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
