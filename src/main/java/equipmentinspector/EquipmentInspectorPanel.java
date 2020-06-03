@@ -103,8 +103,10 @@ public class EquipmentInspectorPanel extends PluginPanel
                         c.gridy++;
 
                     });
-                    equipmentPanels.add(new TotalPanel(totalItemPrice), c);
-                    c.gridy++;
+                    if(!nameLabel.getText().equals(NO_PLAYER_SELECTED)) {
+                        equipmentPanels.add(new TotalPanel(totalItemPrice), c);
+                        c.gridy++;
+                    }
                     header.revalidate();
                     header.repaint();
                 }
