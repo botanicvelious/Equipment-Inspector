@@ -9,6 +9,7 @@ import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.Player;
 import net.runelite.api.kit.KitType;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -67,6 +68,9 @@ public class EquipmentInspectorPlugin extends Plugin
 
 	@Inject
 	private Notifier notifier;
+
+	@Inject
+	private ItemManager itemManager;
 
 	@Override
 	protected void startUp() throws Exception
@@ -132,6 +136,7 @@ public class EquipmentInspectorPlugin extends Plugin
 				{
 					Player p = targetPlayer.get();
 					Map<KitType, ItemComposition> playerEquipment = new HashMap<>();
+					Map<KitType, Integer> equipmentPrices = new HashMap<>();
 
 					for (KitType kitType : KitType.values())
 					{
@@ -140,9 +145,10 @@ public class EquipmentInspectorPlugin extends Plugin
 						{
 							ItemComposition itemComposition = client.getItemDefinition(itemId);
 							playerEquipment.put(kitType, itemComposition);
+							equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
 						}
 					}
-					equipmentInspectorPanel.update(playerEquipment, playerName);
+					equipmentInspectorPanel.update(playerEquipment, equipmentPrices, playerName);
 				}
 		}
 	}
