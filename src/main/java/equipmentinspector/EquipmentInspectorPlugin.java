@@ -1,41 +1,31 @@
 package equipmentinspector;
 
-import net.runelite.api.events.ChatMessage;
-import net.runelite.client.events.ConfigChanged;
-import net.runelite.api.events.MenuEntryAdded;
-import net.runelite.api.events.PlayerMenuOptionClicked;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
+import net.runelite.api.MenuAction;
 import net.runelite.api.Player;
+import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.kit.KitType;
+import net.runelite.client.Notifier;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
-import net.runelite.client.util.Text;
-import static net.runelite.api.ItemID.*;
-
-import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.concurrent.ScheduledExecutorService;
-import net.runelite.client.Notifier;
-import net.runelite.client.eventbus.Subscribe;
-import javax.inject.Provider;
-import javax.swing.SwingUtilities;
-import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
-import net.runelite.client.game.ItemVariationMapping;
-
-import static net.runelite.api.ItemID.*;
 
 
 @PluginDescriptor(
@@ -102,54 +92,45 @@ public class EquipmentInspectorPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onPlayerMenuOptionClicked(PlayerMenuOptionClicked event)
+	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (event.getMenuOption().equals(INSPECT_EQUIPMENT))
+		if (event.getMenuAction() == MenuAction.RUNELITE_PLAYER && event.getMenuOption().equals(INSPECT_EQUIPMENT))
 		{
-
-				try
+			try
+			{
+				SwingUtilities.invokeAndWait(() ->
 				{
-					SwingUtilities.invokeAndWait(() ->
+					if (!navButton.isSelected())
 					{
-						if (!navButton.isSelected())
-						{
-							navButton.getOnSelect().run();
-						}
-					});
-				}
-				catch (InterruptedException | InvocationTargetException e)
-				{
-					throw new RuntimeException(e);
-				}
-
-				String playerName = Text.removeTags(event.getMenuTarget());
-				// The player menu uses a non-breaking space in the player name, we need to replace this to compare
-				// against the playerName in the player cache.
-				String finalPlayerName = playerName.replace('\u00A0', ' ');
-
-				List<Player> players = client.getPlayers();
-				Optional<Player> targetPlayer = players.stream()
-						.filter(Objects::nonNull)
-						.filter(p -> p.getName().equals(finalPlayerName)).findFirst();
-
-				if (targetPlayer.isPresent())
-				{
-					Player p = targetPlayer.get();
-					Map<KitType, ItemComposition> playerEquipment = new HashMap<>();
-					Map<KitType, Integer> equipmentPrices = new HashMap<>();
-
-					for (KitType kitType : KitType.values())
-					{
-						int itemId = p.getPlayerComposition().getEquipmentId(kitType);
-						if (itemId != -1)
-						{
-							ItemComposition itemComposition = client.getItemDefinition(itemId);
-							playerEquipment.put(kitType, itemComposition);
-							equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
-						}
+						navButton.getOnSelect().run();
 					}
-					equipmentInspectorPanel.update(playerEquipment, equipmentPrices, playerName);
+				});
+			}
+			catch (InterruptedException | InvocationTargetException e)
+			{
+				throw new RuntimeException(e);
+			}
+
+			Player p = client.getCachedPlayers()[event.getId()];
+			if (p == null)
+			{
+				return;
+			}
+
+			Map<KitType, ItemComposition> playerEquipment = new HashMap<>();
+			Map<KitType, Integer> equipmentPrices = new HashMap<>();
+
+			for (KitType kitType : KitType.values())
+			{
+				int itemId = p.getPlayerComposition().getEquipmentId(kitType);
+				if (itemId != -1)
+				{
+					ItemComposition itemComposition = client.getItemDefinition(itemId);
+					playerEquipment.put(kitType, itemComposition);
+					equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
 				}
+			}
+			equipmentInspectorPanel.update(playerEquipment, equipmentPrices, p.getName());
 		}
 	}
 }
