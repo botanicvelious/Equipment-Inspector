@@ -18,7 +18,7 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import net.runelite.api.Client;
 
@@ -92,7 +92,7 @@ public class EquipmentInspectorPanel extends PluginPanel
         SwingUtilities.invokeLater(() ->
                 {
                     equipmentPanels.removeAll();
-                    AtomicInteger totalItemPrice= new AtomicInteger();
+                    AtomicLong totalItemPrice= new AtomicLong();
                     playerEquipment.forEach((kitType, itemComposition) ->
                     {
                         AsyncBufferedImage itemImage = itemManager.getImage(itemComposition.getId());

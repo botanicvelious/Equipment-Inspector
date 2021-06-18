@@ -16,7 +16,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 class ItemPanel extends JPanel
 {
@@ -91,7 +91,7 @@ class ItemPanel extends JPanel
 }
 class TotalPanel extends JPanel {
 
-    TotalPanel(AtomicInteger total) {
+    TotalPanel(AtomicLong total) {
         setBorder(new EmptyBorder(3, 3, 3, 3));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
 
