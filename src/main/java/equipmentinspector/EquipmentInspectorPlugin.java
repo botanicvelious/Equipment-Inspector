@@ -151,17 +151,22 @@ public class EquipmentInspectorPlugin extends Plugin
 		storedPlayers.clear();
 	}
 
-	private PlayerInfo getPlayerInfo(int id) {
+	private PlayerInfo getPlayerInfo(int id)
+	{
 		Player p = client.getCachedPlayers()[id];
-		if (p != null) {
+		if (p != null)
+		{
 			return new PlayerInfo(p.getId(), p.getName(), p.getPlayerComposition());
-		} else {
+		}
+		else
+		{
 			return storedPlayers.getOrDefault(id, null);
 		}
 	}
 
 	@Value
-	private static class PlayerInfo {
+	private static class PlayerInfo
+	{
 		int id;
 		String name;
 		PlayerComposition playerComposition;
