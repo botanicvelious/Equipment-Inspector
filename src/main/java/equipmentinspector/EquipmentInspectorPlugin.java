@@ -99,7 +99,8 @@ public class EquipmentInspectorPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onMenuOpened(MenuOpened event) {
+	public void onMenuOpened(MenuOpened event)
+	{
 		Stream.of(event.getMenuEntries()).map(MenuEntry::getActor)
 				.filter(a -> a instanceof Player)
 				.map(Player.class::cast)
