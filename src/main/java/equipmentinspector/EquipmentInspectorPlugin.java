@@ -5,17 +5,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.swing.SwingUtilities;
+
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Player;
+import net.runelite.api.PlayerComposition;
+import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.Notifier;
@@ -62,12 +68,13 @@ public class EquipmentInspectorPlugin extends Plugin
 	@Inject
 	private ItemManager itemManager;
 
+	private final Map<Integer, PlayerInfo> storedPlayers = new HashMap<>();
+
 	@Override
 	protected void startUp() throws Exception
 	{
 		equipmentInspectorPanel = injector.getInstance(EquipmentInspectorPanel.class);
 		menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
-
 		BufferedImage icon;
 		synchronized (ImageIO.class)
 		{
@@ -92,6 +99,17 @@ public class EquipmentInspectorPlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onMenuOpened(MenuOpened event)
+	{
+		Stream.of(event.getMenuEntries()).map(MenuEntry::getActor)
+				.filter(a -> a instanceof Player)
+				.map(Player.class::cast)
+				.distinct()
+				.map(p -> new PlayerInfo(p. getId(), p.getName(), p.getPlayerComposition()))
+				.forEach(playerInfo -> storedPlayers.put(playerInfo.getId(), playerInfo));
+	}
+
+	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if (event.getMenuAction() == MenuAction.RUNELITE_PLAYER && event.getMenuOption().equals(INSPECT_EQUIPMENT))
@@ -110,8 +128,7 @@ public class EquipmentInspectorPlugin extends Plugin
 			{
 				throw new RuntimeException(e);
 			}
-
-			Player p = client.getCachedPlayers()[event.getId()];
+			PlayerInfo p = getPlayerInfo(event.getId());
 			if (p == null)
 			{
 				return;
@@ -132,5 +149,27 @@ public class EquipmentInspectorPlugin extends Plugin
 			}
 			equipmentInspectorPanel.update(playerEquipment, equipmentPrices, p.getName());
 		}
+		storedPlayers.clear();
+	}
+
+	private PlayerInfo getPlayerInfo(int id)
+	{
+		Player p = client.getCachedPlayers()[id];
+		if (p != null)
+		{
+			return new PlayerInfo(p.getId(), p.getName(), p.getPlayerComposition());
+		}
+		else
+		{
+			return storedPlayers.getOrDefault(id, null);
+		}
+	}
+
+	@Value
+	private static class PlayerInfo
+	{
+		int id;
+		String name;
+		PlayerComposition playerComposition;
 	}
 }
