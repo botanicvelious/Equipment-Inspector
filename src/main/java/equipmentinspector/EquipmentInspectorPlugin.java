@@ -35,8 +35,7 @@ import net.runelite.client.ui.NavigationButton;
 
 
 @PluginDescriptor(
-		name = "Equipment Inspector",
-		enabledByDefault = false
+		name = "Equipment Inspector"
 )
 
 @Slf4j
