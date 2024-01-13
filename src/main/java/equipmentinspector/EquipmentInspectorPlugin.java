@@ -115,13 +115,7 @@ public class EquipmentInspectorPlugin extends Plugin
 		{
 			try
 			{
-				SwingUtilities.invokeAndWait(() ->
-				{
-					if (!navButton.isSelected())
-					{
-						navButton.getOnSelect().run();
-					}
-				});
+				SwingUtilities.invokeAndWait(() -> pluginToolbar.openPanel(navButton));
 			}
 			catch (InterruptedException | InvocationTargetException e)
 			{
