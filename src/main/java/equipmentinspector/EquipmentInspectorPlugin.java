@@ -98,8 +98,6 @@ public class EquipmentInspectorPlugin extends Plugin
 				.priority(5)
 				.panel(equipmentInspectorPanel)
 				.build();
-
-		pluginToolbar.addNavigation(navButton);
 	}
 
 	@Override
@@ -132,6 +130,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	{
 		if (event.getMenuAction() == MenuAction.RUNELITE_PLAYER && event.getMenuOption().equals(INSPECT_EQUIPMENT))
 		{
+			pluginToolbar.addNavigation(navButton);
 			try
 			{
 				SwingUtilities.invokeAndWait(() -> pluginToolbar.openPanel(navButton));
