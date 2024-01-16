@@ -10,13 +10,18 @@ import net.runelite.client.ui.PluginPanel;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.text.NumberFormat;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -41,6 +46,7 @@ public class EquipmentInspectorPanel extends PluginPanel
 
     public EquipmentInspectorPanel()
     {
+
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -96,15 +102,14 @@ public class EquipmentInspectorPanel extends PluginPanel
                     playerEquipment.forEach((kitType, itemComposition) ->
                     {
                         AsyncBufferedImage itemImage = itemManager.getImage(itemComposition.getId());
-                        int GetitemPrice = equipmentPrices.get(kitType);
-                        totalItemPrice.addAndGet(GetitemPrice);
-                        String itemPrice = NumberFormat.getNumberInstance(Locale.US).format(GetitemPrice);
+                        int itemPrice = equipmentPrices.get(kitType);
+                        totalItemPrice.addAndGet(itemPrice);
                         equipmentPanels.add(new ItemPanel(itemComposition, kitType, itemImage, itemPrice), c);
                         c.gridy++;
 
                     });
                     if(!nameLabel.getText().equals(NO_PLAYER_SELECTED)) {
-                        equipmentPanels.add(new TotalPanel(totalItemPrice), c);
+                        equipmentPanels.add(new TotalPanel(totalItemPrice.get()), c);
                         c.gridy++;
                     }
                     header.revalidate();
