@@ -77,6 +77,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	private EquipmentInspectorConfig config;
 	@Inject
 	private SpriteManager spriteManager;
+	private boolean showMenuItem;
 	@Provides
 	EquipmentInspectorConfig getConfig(ConfigManager configManager)
 	{
@@ -111,12 +112,16 @@ public class EquipmentInspectorPlugin extends Plugin
 		pluginToolbar.removeNavigation(navButton);
 	}
 	@Subscribe
-	public void onMenuEntryAdded(MenuEntryAdded event)
+	public synchronized void onMenuEntryAdded(MenuEntryAdded event)
 	{
 		if (!config.holdShift() || client.isKeyPressed(KeyCode.KC_SHIFT)) {
-			menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
+			if (!showMenuItem) {
+				menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
+			}
+			showMenuItem = true;
 		} else {
 			menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
+			showMenuItem = false;
 		}
 	}
 	@Subscribe
