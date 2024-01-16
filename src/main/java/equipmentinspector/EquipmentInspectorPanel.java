@@ -1,5 +1,6 @@
 package equipmentinspector;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ItemComposition;
 import net.runelite.api.kit.KitType;
@@ -21,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,7 +42,8 @@ public class EquipmentInspectorPanel extends PluginPanel
 
     @Inject
     private Client client;
-
+    @Setter
+    private BufferedImage membersImage;
     @Inject
     private ItemManager itemManager;
 
@@ -104,7 +107,7 @@ public class EquipmentInspectorPanel extends PluginPanel
                         AsyncBufferedImage itemImage = itemManager.getImage(itemComposition.getId());
                         int itemPrice = equipmentPrices.get(kitType);
                         totalItemPrice.addAndGet(itemPrice);
-                        equipmentPanels.add(new ItemPanel(itemComposition, kitType, itemImage, itemPrice), c);
+                        equipmentPanels.add(new ItemPanel(itemComposition, kitType, itemImage, itemPrice, membersImage), c);
                         c.gridy++;
 
                     });
