@@ -23,6 +23,7 @@ import net.runelite.api.MenuAction;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.Player;
 import net.runelite.api.PlayerComposition;
+import net.runelite.api.SpriteID;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
@@ -31,12 +32,12 @@ import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
-
 
 @PluginDescriptor(
 		name = "Equipment Inspector"
@@ -74,6 +75,8 @@ public class EquipmentInspectorPlugin extends Plugin
 
 	@Inject
 	private EquipmentInspectorConfig config;
+	@Inject
+	private SpriteManager spriteManager;
 	@Provides
 	EquipmentInspectorConfig getConfig(ConfigManager configManager)
 	{
@@ -86,6 +89,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		equipmentInspectorPanel = injector.getInstance(EquipmentInspectorPanel.class);
+
 		BufferedImage icon;
 		synchronized (ImageIO.class)
 		{
@@ -128,6 +132,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
+		equipmentInspectorPanel.setMembersImage(spriteManager.getSprite(SpriteID.WORLD_SWITCHER_STAR_MEMBERS, 0));
 		if (event.getMenuAction() == MenuAction.RUNELITE_PLAYER && event.getMenuOption().equals(INSPECT_EQUIPMENT))
 		{
 			pluginToolbar.addNavigation(navButton);
