@@ -11,19 +11,22 @@ import okhttp3.HttpUrl;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 class ItemPanel extends JPanel
 {
 
-    ItemPanel(ItemComposition item, KitType kitType, AsyncBufferedImage icon, Integer itemPrice)
+    ItemPanel(ItemComposition item, KitType kitType, AsyncBufferedImage icon, Integer itemPrice, BufferedImage membersImage)
     {
         setBorder(new EmptyBorder(3, 3, 3, 3));
         setBackground(ColorScheme.DARK_GRAY_COLOR);
@@ -31,8 +34,13 @@ class ItemPanel extends JPanel
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
 
-        JLabel name = new JLabel(item.getName());
-
+        boolean membersItem = item.getName().endsWith("(Members)");
+        JLabel name = new JLabel(item.getName().replace(" (Members)", ""));
+        name.setFont(FontManager.getRunescapeFont());
+        if (membersItem) {
+            name.setIcon(new ImageIcon(membersImage));
+            name.setHorizontalTextPosition(SwingConstants.LEFT);
+        }
         JMenuItem wiki = new JMenuItem("Wiki");
 
         HttpUrl WIKI_BASE = HttpUrl.parse("https://oldschool.runescape.wiki");
@@ -51,6 +59,7 @@ class ItemPanel extends JPanel
 
         JLabel location = new JLabel(StringUtils.capitalize(kitType.toString().toLowerCase()));
         location.setFont(FontManager.getRunescapeSmallFont());
+        location.setForeground(Color.GRAY);
         JLabel price = getPriceLabel(itemPrice);
 
         JLabel imageLabel = new JLabel();
