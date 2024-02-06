@@ -2,6 +2,7 @@ package equipmentinspector;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,12 +29,14 @@ import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.kit.KitType;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.SpriteManager;
 import net.runelite.client.menus.MenuManager;
+import net.runelite.client.menus.WidgetMenuOption;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
@@ -77,7 +80,6 @@ public class EquipmentInspectorPlugin extends Plugin
 	private EquipmentInspectorConfig config;
 	@Inject
 	private SpriteManager spriteManager;
-	private boolean showMenuItem;
 	@Provides
 	EquipmentInspectorConfig getConfig(ConfigManager configManager)
 	{
@@ -108,25 +110,31 @@ public class EquipmentInspectorPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
+		removeMenuItem();
 		pluginToolbar.removeNavigation(navButton);
 	}
-	@Subscribe
-	public synchronized void onMenuEntryAdded(MenuEntryAdded event)
-	{
-		if (!config.holdShift() || client.isKeyPressed(KeyCode.KC_SHIFT)) {
-			if (!showMenuItem) {
-				menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
-			}
-			showMenuItem = true;
-		} else {
-			menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
-			showMenuItem = false;
+
+	private void removeMenuItem() {
+		menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
+	}
+
+	private void addMenuItem() {
+		if (client != null &&
+				Arrays.stream(client.getMenuEntries())
+						.filter(i -> i.getPlayer() != null)
+						.noneMatch(i -> INSPECT_EQUIPMENT.equals(i.getOption()))) {
+			menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
 		}
 	}
+
 	@Subscribe
 	public void onMenuOpened(MenuOpened event)
 	{
+		if (!config.holdShift() || client.isKeyPressed(KeyCode.KC_SHIFT)) {
+			addMenuItem();
+		} else {
+			removeMenuItem();
+		}
 		Stream.of(event.getMenuEntries()).map(MenuEntry::getActor)
 				.filter(a -> a instanceof Player)
 				.map(Player.class::cast)
