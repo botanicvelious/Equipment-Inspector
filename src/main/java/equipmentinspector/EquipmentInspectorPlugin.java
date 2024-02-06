@@ -2,6 +2,7 @@ package equipmentinspector;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -77,7 +78,6 @@ public class EquipmentInspectorPlugin extends Plugin
 	private EquipmentInspectorConfig config;
 	@Inject
 	private SpriteManager spriteManager;
-	private boolean showMenuItem;
 	@Provides
 	EquipmentInspectorConfig getConfig(ConfigManager configManager)
 	{
@@ -108,20 +108,27 @@ public class EquipmentInspectorPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
+		removeMenuItem();
 		pluginToolbar.removeNavigation(navButton);
 	}
+
+	private synchronized void removeMenuItem() {
+		menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
+	}
+
+	private synchronized void addMenuItem() {
+		if (client == null) return;
+		if (Arrays.stream(client.getPlayerOptions()).noneMatch(INSPECT_EQUIPMENT::equals)) {
+			menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
+		}
+	}
+
 	@Subscribe
-	public synchronized void onMenuEntryAdded(MenuEntryAdded event)
-	{
+	public void onMenuEntryAdded(MenuEntryAdded event) {
 		if (!config.holdShift() || client.isKeyPressed(KeyCode.KC_SHIFT)) {
-			if (!showMenuItem) {
-				menuManager.get().addPlayerMenuItem(INSPECT_EQUIPMENT);
-			}
-			showMenuItem = true;
+			addMenuItem();
 		} else {
-			menuManager.get().removePlayerMenuItem(INSPECT_EQUIPMENT);
-			showMenuItem = false;
+			removeMenuItem();
 		}
 	}
 	@Subscribe
