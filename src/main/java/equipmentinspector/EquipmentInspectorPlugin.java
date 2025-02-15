@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -53,7 +52,6 @@ public class EquipmentInspectorPlugin extends Plugin
 	private static final String KICK_OPTION = "Kick";
 
 	@Inject
-	@Nullable
 	private Client client;
 
 	@Inject
@@ -182,7 +180,7 @@ public class EquipmentInspectorPlugin extends Plugin
 
 	private PlayerInfo getPlayerInfo(int id)
 	{
-		Player p = client.getCachedPlayers()[id];
+		Player p = client.getTopLevelWorldView().players().byIndex(id);
 		if (p != null)
 		{
 			return new PlayerInfo(p.getId(), p.getName(), p.getPlayerComposition());
