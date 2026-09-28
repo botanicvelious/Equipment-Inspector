@@ -170,7 +170,7 @@ public class EquipmentInspectorPlugin extends Plugin
 				{
 					ItemComposition itemComposition = client.getItemDefinition(itemId);
 					playerEquipment.put(kitType, itemComposition);
-					equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
+					equipmentPrices.put(kitType, (int) itemManager.getItemPrice(itemId));
 				}
 			}
 			equipmentInspectorPanel.update(playerEquipment, equipmentPrices, p.getName());
