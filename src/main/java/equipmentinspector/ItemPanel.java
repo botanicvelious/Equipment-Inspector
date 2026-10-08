@@ -26,7 +26,7 @@ import java.util.Locale;
 class ItemPanel extends JPanel
 {
 
-    ItemPanel(ItemComposition item, KitType kitType, AsyncBufferedImage icon, Integer itemPrice, BufferedImage membersImage)
+    ItemPanel(ItemComposition item, KitType kitType, AsyncBufferedImage icon, Long itemPrice, BufferedImage membersImage)
     {
         setBorder(new EmptyBorder(3, 3, 3, 3));
         setBackground(ColorScheme.DARK_GRAY_COLOR);

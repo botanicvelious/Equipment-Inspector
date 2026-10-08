@@ -86,7 +86,7 @@ public class EquipmentInspectorPanel extends PluginPanel
         update(new HashMap<>(), new HashMap<>(), "");
     }
 
-    public void update(Map<KitType, ItemComposition> playerEquipment, Map<KitType, Integer> equipmentPrices, String playerName)
+    public void update(Map<KitType, ItemComposition> playerEquipment, Map<KitType, Long> equipmentPrices, String playerName)
     {
 
         if (playerName.isEmpty() || playerName == null)
@@ -105,7 +105,7 @@ public class EquipmentInspectorPanel extends PluginPanel
                     playerEquipment.forEach((kitType, itemComposition) ->
                     {
                         AsyncBufferedImage itemImage = itemManager.getImage(itemComposition.getId());
-                        int itemPrice = equipmentPrices.get(kitType);
+                        Long itemPrice = equipmentPrices.get(kitType);
                         totalItemPrice.addAndGet(itemPrice);
                         equipmentPanels.add(new ItemPanel(itemComposition, kitType, itemImage, itemPrice, membersImage), c);
                         c.gridy++;

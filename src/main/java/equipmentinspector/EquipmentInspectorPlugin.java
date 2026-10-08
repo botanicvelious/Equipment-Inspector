@@ -161,7 +161,7 @@ public class EquipmentInspectorPlugin extends Plugin
 			}
 
 			Map<KitType, ItemComposition> playerEquipment = new HashMap<>();
-			Map<KitType, Integer> equipmentPrices = new HashMap<>();
+			Map<KitType, Long> equipmentPrices = new HashMap<>();
 
 			for (KitType kitType : KitType.values())
 			{
@@ -170,7 +170,7 @@ public class EquipmentInspectorPlugin extends Plugin
 				{
 					ItemComposition itemComposition = client.getItemDefinition(itemId);
 					playerEquipment.put(kitType, itemComposition);
-					equipmentPrices.put(kitType, (int) itemManager.getItemPrice(itemId));
+					equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
 				}
 			}
 			equipmentInspectorPanel.update(playerEquipment, equipmentPrices, p.getName());
