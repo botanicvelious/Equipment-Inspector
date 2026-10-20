@@ -29,6 +29,7 @@ import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.kit.KitType;
 import net.runelite.client.Notifier;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
@@ -53,6 +54,9 @@ public class EquipmentInspectorPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
 
 	@Inject
 	private Provider<MenuManager> menuManager;
@@ -88,6 +92,7 @@ public class EquipmentInspectorPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		equipmentInspectorPanel = injector.getInstance(EquipmentInspectorPanel.class);
+		equipmentInspectorPanel.setViewSelfListener(() -> clientThread.invoke(this::viewSelf));
 
 		BufferedImage icon;
 		synchronized (ImageIO.class)
@@ -101,6 +106,8 @@ public class EquipmentInspectorPlugin extends Plugin
 				.priority(5)
 				.panel(equipmentInspectorPanel)
 				.build();
+
+		pluginToolbar.addNavigation(navButton);
 	}
 
 	@Override
@@ -145,7 +152,6 @@ public class EquipmentInspectorPlugin extends Plugin
 		equipmentInspectorPanel.setMembersImage(spriteManager.getSprite(SpriteID.WORLD_SWITCHER_STAR_MEMBERS, 0));
 		if (event.getMenuAction() == MenuAction.RUNELITE_PLAYER && event.getMenuOption().equals(INSPECT_EQUIPMENT))
 		{
-			pluginToolbar.addNavigation(navButton);
 			try
 			{
 				SwingUtilities.invokeAndWait(() -> pluginToolbar.openPanel(navButton));
@@ -160,24 +166,39 @@ public class EquipmentInspectorPlugin extends Plugin
 				return;
 			}
 
-			Map<KitType, ItemComposition> playerEquipment = new HashMap<>();
-			Map<KitType, Long> equipmentPrices = new HashMap<>();
-
-			for (KitType kitType : KitType.values())
-			{
-				int itemId = p.getPlayerComposition().getEquipmentId(kitType);
-				if (itemId != -1)
-				{
-					ItemComposition itemComposition = client.getItemDefinition(itemId);
-					playerEquipment.put(kitType, itemComposition);
-					equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
-				}
-			}
-			equipmentInspectorPanel.update(playerEquipment, equipmentPrices, p.getName());
+			showEquipment(p.getPlayerComposition(), p.getName());
 		}
 		storedPlayers.clear();
 	}
+	private void viewSelf()
+	{
+		Player local = client.getLocalPlayer();
+		if (local == null)
+		{
+			return;
+		}
 
+		equipmentInspectorPanel.setMembersImage(spriteManager.getSprite(SpriteID.WORLD_SWITCHER_STAR_MEMBERS, 0));
+		showEquipment(local.getPlayerComposition(), local.getName());
+	}
+
+	private void showEquipment(PlayerComposition composition, String name)
+	{
+		Map<KitType, ItemComposition> playerEquipment = new HashMap<>();
+		Map<KitType, Long> equipmentPrices = new HashMap<>();
+
+		for (KitType kitType : KitType.values())
+		{
+			int itemId = composition.getEquipmentId(kitType);
+			if (itemId != -1)
+			{
+				ItemComposition itemComposition = client.getItemDefinition(itemId);
+				playerEquipment.put(kitType, itemComposition);
+				equipmentPrices.put(kitType, itemManager.getItemPrice(itemId));
+			}
+		}
+		equipmentInspectorPanel.update(playerEquipment, equipmentPrices, name);
+	}
 	private PlayerInfo getPlayerInfo(int id)
 	{
 		Player p = client.getTopLevelWorldView().players().byIndex(id);
