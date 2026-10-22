@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -44,6 +45,8 @@ public class EquipmentInspectorPanel extends PluginPanel
     private Client client;
     @Setter
     private BufferedImage membersImage;
+    @Setter
+    private Runnable viewSelfListener;
     @Inject
     private ItemManager itemManager;
 
@@ -72,12 +75,24 @@ public class EquipmentInspectorPanel extends PluginPanel
         nameLabel.setForeground(Color.WHITE);
 
         header.add(nameLabel, BorderLayout.CENTER);
+        JButton viewSelfButton = new JButton("View Self");
+        viewSelfButton.setFocusable(false);
+        viewSelfButton.addActionListener(e ->
+        {
+            if (viewSelfListener != null)
+            {
+                viewSelfListener.run();
+            }
+        });
 
         layout.setHorizontalGroup(layout.createParallelGroup()
+                .addComponent(viewSelfButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(equipmentPanels)
                 .addComponent(header)
         );
         layout.setVerticalGroup(layout.createSequentialGroup()
+                .addComponent(viewSelfButton)
+                .addGap(10)
                 .addComponent(header)
                 .addGap(10)
                 .addComponent(equipmentPanels)
